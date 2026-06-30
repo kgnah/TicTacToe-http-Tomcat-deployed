@@ -1,0 +1,45 @@
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+public class RemoteComputerPlayer extends Player {
+
+    private String host;
+    private int port;
+    private HttpClient client;
+
+    public RemoteComputerPlayer(int mark, String host, int port) {
+        super(mark);
+        this.host = host;
+        this.port = port;
+        this.client = HttpClient.newHttpClient();
+    }
+
+    @Override
+    public void makeMove(Board board) {
+        try {
+            String boardString = BoardProtocol.encode(board);
+
+            String url = "http://" + host + ":" + port + "/move?board=" + boardString;
+
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            String body = response.body();
+
+            if (body.startsWith("MOVE:")) {
+                int move = Integer.parseInt(body.substring(5).trim());
+
+                if (move != -1) {
+                    board.setCell(move, mark);
+                }
+            }
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
