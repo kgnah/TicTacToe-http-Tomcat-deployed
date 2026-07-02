@@ -10,12 +10,16 @@ import java.io.IOException;
 public class MoveServlet extends HttpServlet {
 
     @Override
-    protected void doGet(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String boardString = request.getParameter("board");
+
+        if (boardString == null || boardString.length() != 9 || !boardString.matches("[012]+")) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"Invalid board\"}");
+            return;
+        }
 
         Board board = BoardProtocol.decode(boardString);
 
@@ -29,9 +33,7 @@ public class MoveServlet extends HttpServlet {
 
         String updatedBoard = BoardProtocol.encode(board);
 
-        String json =
-                "{\"move\":" + move +
-                        ",\"board\":\"" + updatedBoard + "\"}";
+        String json = "{\"move\":" + move + ",\"board\":\"" + updatedBoard + "\"}";
 
         response.setContentType("application/json");
         response.getWriter().write(json);
