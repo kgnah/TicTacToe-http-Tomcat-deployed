@@ -111,6 +111,7 @@
 
         const data = await response.json();
 
+        // extracts board from Json response
         board = data.board.split("").map(Number);
 
         drawBoard();
