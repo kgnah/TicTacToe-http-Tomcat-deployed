@@ -37,6 +37,7 @@
     let board = [0,0,0,0,0,0,0,0,0];
     let gameOver = false;
 
+    // Display the current board on the web page
     function drawBoard() {
         const boardDiv = document.getElementById("board");
         boardDiv.innerHTML = "";
@@ -78,6 +79,7 @@
         return board.every(cell => cell !== 0);
     }
 
+    // Handle human move and communicate with MoveServlet
     async function playerMove(index) {
         if (gameOver) {
             return;
@@ -107,8 +109,10 @@
 
         const boardString = board.join("");
 
+        // Send board to MoveServlet and wait for JSON response
         const response = await fetch("move?board=" + boardString);
 
+        // Json response from server
         const data = await response.json();
 
         // extracts board from Json response
