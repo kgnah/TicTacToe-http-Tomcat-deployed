@@ -65,6 +65,7 @@
         }
     }
 
+    // Check if a player has won
     function checkWin(player) {
         const wins = [
             [0,1,2], [3,4,5], [6,7,8],
@@ -75,6 +76,7 @@
         return wins.some(w => board[w[0]] === player && board[w[1]] === player && board[w[2]] === player);
     }
 
+    // Check if the board is full
     function isFull() {
         return board.every(cell => cell !== 0);
     }
