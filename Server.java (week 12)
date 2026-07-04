@@ -36,19 +36,15 @@ public class Server {
 
             int move = computer.chooseMove(board);
 
-            if (move != -1) {
-                board.setCell(move, 2);
-            }
+            String response = "MOVE: " + move;
 
-            String updatedBoard = BoardProtocol.encode(board);
+            // set response headers
+            exchange.getResponseHeaders().set("Content-Type", "text/plain");
 
-            String response = "{\"move\":" + move + ",\"board\":\"" + updatedBoard + "\"}";
-
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-
+            // send http status code and response length
             exchange.sendResponseHeaders(200, response.getBytes().length);
 
+            // write the response body
             try (OutputStream output = exchange.getResponseBody()) {
 
                 output.write(response.getBytes());
