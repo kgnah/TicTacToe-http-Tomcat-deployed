@@ -20,14 +20,19 @@ public class RemoteComputerPlayer extends Player {
     @Override
     public void makeMove(Board board) {
         try {
+            // encode board for HTTP request
             String boardString = BoardProtocol.encode(board);
 
+            // Build HTTP GET URL
             String url = "http://" + host + ":" + port + "/move?board=" + boardString;
 
+            // Create GET request
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
 
+            // Send request and receive response from HTTP server
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            // Expected response example: MOVE: 1
             String body = response.body();
 
             if (body.startsWith("MOVE:")) {
