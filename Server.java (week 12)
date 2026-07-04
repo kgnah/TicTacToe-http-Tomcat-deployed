@@ -12,22 +12,27 @@ public class Server {
 
         HttpServer server = HttpServer.create(new InetSocketAddress(5000), 0);
 
+        // Register /move endpoint and connect it to MoveHandler
         server.createContext("/move", new MoveHandler());
 
         server.setExecutor(null);
 
         System.out.println("HTTP Server started");
 
+        // Start HTTP server
         server.start();
     }
 
     static class MoveHandler implements HttpHandler {
 
         @Override
+        // Handle one HTTP request from client
         public void handle(HttpExchange exchange) throws IOException {
 
+            // Get query string, example: board=100000000
             String query = exchange.getRequestURI().getQuery();
 
+            // Remove "board=" prefix
             String boardString = query.substring(6);
 
             Board board = BoardProtocol.decode(boardString);
